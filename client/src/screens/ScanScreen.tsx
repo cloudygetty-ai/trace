@@ -55,12 +55,12 @@ export default function ScanScreen() {
         </p>
         <div onClick={startScan}
           className={"w-full max-w-xs border-2 rounded-2xl py-10 flex flex-col items-center gap-4 cursor-pointer transition-all " +
-            (scanning ? 'border-cyan border-solid bg-cyan/5 animate-pulse' : result ? 'border-green/50 border-solid bg-green/5' : 'border-[#2c3540] border-dashed bg-s2')}>
+            (scanning ? 'border-amber border-solid bg-amber/5 animate-pulse' : result ? 'border-green/50 border-solid bg-green/5' : 'border-[#2c3540] border-dashed glass-card')}>
           <div className={"w-24 h-24 rounded-full border-4 flex items-center justify-center text-4xl transition-all " +
-            (scanning ? 'border-cyan' : result ? 'border-green' : 'border-[#2c3540]')}>
+            (scanning ? 'border-amber' : result ? 'border-green' : 'border-[#2c3540]')}>
             {result ? '✓' : '📶'}
           </div>
-          <p className={"font-mono text-xs tracking-[.08em] " + (scanning ? 'text-cyan' : result ? 'text-green' : 'text-muted2')}>
+          <p className={"font-mono text-xs tracking-[.08em] " + (scanning ? 'text-amber' : result ? 'text-green' : 'text-muted2')}>
             {scanning ? 'SCANNING...' : result ? '✓ CHIP DETECTED' : 'TAP TO SCAN'}
           </p>
         </div>
@@ -77,7 +77,7 @@ export default function ScanScreen() {
             </div>
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div><p className="font-mono text-[8px] text-muted2 uppercase">Breed</p><p className="font-semibold mt-0.5">{result.breed ?? 'Husky Mix'}</p></div>
-              <div><p className="font-mono text-[8px] text-muted2 uppercase">Contact</p><p className="font-semibold mt-0.5 text-cyan">{result.contact ?? '(201) 555-0192'}</p></div>
+              <div><p className="font-mono text-[8px] text-muted2 uppercase">Contact</p><p className="font-semibold mt-0.5 text-amber">{result.contact ?? '(201) 555-0192'}</p></div>
             </div>
             <div className="flex gap-2">
               <Btn full sm onClick={() => { api.reportScan({ chip_id: result.chip_id, source:'nfc' }); showToast('✓ Sighting reported'); }}>Report Sighting</Btn>
@@ -86,11 +86,11 @@ export default function ScanScreen() {
           </div>
         )}
 
-        <div className="w-full max-w-xs bg-s1 border border-border rounded-2xl p-4">
+        <div className="w-full max-w-xs glass-card border border-amber/10 rounded-2xl p-4">
           <p className="font-mono text-[9px] text-muted2 mb-3 uppercase tracking-[.08em]">Or enter chip ID</p>
           <div className="flex gap-2">
             <input value={chipId} onChange={e => setChipId(e.target.value)} placeholder="985000012384721"
-              className="flex-1 bg-s2 border border-[#2c3540] rounded-xl px-3 py-2.5 text-sm font-mono text-cyan outline-none focus:border-cyan"/>
+              className="flex-1 glass-card border border-[#2c3540] rounded-xl px-3 py-2.5 text-sm font-mono text-amber outline-none focus:border-amber"/>
             <Btn sm onClick={() => lookup(chipId)}>Go</Btn>
           </div>
         </div>
