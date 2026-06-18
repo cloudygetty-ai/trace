@@ -54,27 +54,27 @@ export default function MapScreen() {
           <text x="214" y="163" fontFamily="Space Mono" fontSize="8" fill="#1e2a1e" textAnchor="middle">MAIN ST</text>
         </svg>
         <div className="absolute top-3 right-3 flex flex-col gap-2">
-          <div className="bg-[rgba(12,15,16,.88)] border border-border rounded-xl p-2.5 px-3 backdrop-blur-md">
+          <div className="bg-[rgba(12,15,16,.88)] border border-amber/10 rounded-xl p-2.5 px-3 backdrop-blur-md">
             <p className="font-mono text-lg font-bold text-warn leading-none">4</p>
             <p className="font-mono text-[8px] text-muted2 tracking-[.06em] mt-1">SIGHTINGS</p>
           </div>
-          <div className="bg-[rgba(12,15,16,.88)] border border-border rounded-xl p-2.5 px-3 backdrop-blur-md">
-            <p className="font-mono text-lg font-bold text-cyan leading-none">2m</p>
+          <div className="bg-[rgba(12,15,16,.88)] border border-amber/10 rounded-xl p-2.5 px-3 backdrop-blur-md">
+            <p className="font-mono text-lg font-bold text-amber leading-none">2m</p>
             <p className="font-mono text-[8px] text-muted2 tracking-[.06em] mt-1">LAST SEEN</p>
           </div>
         </div>
       </div>
-      <div className="bg-s1 border-t border-border p-4 flex-shrink-0">
+      <div className="glass-card border-t border-amber/10 p-4 flex-shrink-0">
         <div className="flex items-center gap-3">
           <span className="text-xl">🐕</span>
           <p className="text-sm font-semibold flex-1">{activeDog?.name ?? 'Luna'} — <span className="text-warn text-xs">LOST</span></p>
-          <button onClick={() => nav('/broadcast')} className="h-9 px-4 bg-transparent border border-border rounded-xl font-mono text-[9px] text-muted2">📢 Broadcast</button>
+          <button onClick={() => nav('/broadcast')} className="h-9 px-4 bg-transparent border border-amber/10 rounded-xl font-mono text-[9px] text-muted2">📢 Broadcast</button>
         </div>
         <div className="flex gap-2 mt-3 flex-wrap">
-          {[['bg-cyan','BLE relay'],['bg-purple-400','Community'],['bg-amber-400','Last seen']].map(([c,l]) => (
-            <div key={l} className="bg-s2 border border-border rounded-xl px-2.5 py-1.5 flex items-center gap-1.5">
+          {[['bg-amber','BLE relay'],['bg-purple-400','Community'],['bg-amber-400','Last seen']].map(([c,l]) => (
+            <div key={l} className="glass-card border border-amber/10 rounded-xl px-2.5 py-1.5 flex items-center gap-1.5">
               <div className={"w-1.5 h-1.5 rounded-full " + c}/>
-              <span className="text-[11px] text-text">{l}</span>
+              <span className="text-[11px] text-cream">{l}</span>
             </div>
           ))}
         </div>
