@@ -31,7 +31,7 @@ export default function AddDog() {
         <div className="text-center py-4">
           <div className="text-5xl mb-3">🐕</div>
           <p className="text-xl font-bold">Add Your Dog</p>
-          <p className="text-sm text-muted2 mt-1">You can add more dogs later</p>
+          <p className="text-sm text-muted mt-1">You can add more dogs later</p>
         </div>
         <FormInput label="Dog's name" placeholder="Luna" value={f.name} onChange={set('name')}/>
         <div className="grid grid-cols-2 gap-3">
@@ -41,13 +41,13 @@ export default function AddDog() {
         <FormInput label="Color / markings" placeholder="Grey & white, blue eyes" value={f.color} onChange={set('color')}/>
         <FormInput label="ACCT chip ID (from vet)" placeholder="985000012384721" value={f.chip_id} onChange={set('chip_id')} className="font-mono tracking-[.06em]"/>
         <div className="flex flex-col gap-2">
-          <label className="font-mono text-[9px] uppercase tracking-[.1em] text-muted2">Chip type</label>
+          <label className="font-mono text-[9px] uppercase tracking-[.1em] text-muted">Chip type</label>
           <div className="grid grid-cols-2 gap-3">
             {(['passive','active'] as const).map(type => (
               <div key={type} onClick={() => setF(p => ({...p, chip_type:type}))}
-                className={"border rounded-xl p-3 cursor-pointer transition-all " + (f.chip_type===type ? 'border-amber bg-amber/5' : 'border-amber/10 glass-card')}>
+                className={"border rounded-xl p-3 cursor-pointer transition-all " + (f.chip_type===type ? 'border-amber bg-amber/5' : 'border-amber/15 bg-surface border border-amber/15 rounded-2xl')}>
                 <p className="text-sm font-semibold capitalize">{type}</p>
-                <p className="text-[10px] text-muted2 mt-1">{type==='passive' ? 'NFC + RFID · No battery' : 'NFC + RFID + BLE · 3yr battery'}</p>
+                <p className="text-[10px] text-muted mt-1">{type==='passive' ? 'NFC + RFID · No battery' : 'NFC + RFID + BLE · 3yr battery'}</p>
                 <p className="font-mono text-[10px] text-amber mt-1">{type==='passive' ? '$24.99' : '$59.99'}</p>
               </div>
             ))}
