@@ -2,27 +2,20 @@
   "version": 2,
   "builds": [
     {
-      "src": "server/src/index.ts",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": [
-          "server/src/**"
-        ]
-      }
+      "src": "server/api/index.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "server/src/index.ts"
+      "dest": "server/api/index.js"
     }
   ],
   "env": {
     "NODE_ENV": "production",
     "SUPABASE_URL": "https://uneqlkclvazolpwufcwa.supabase.co",
     "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVuZXFsa2NsdmF6b2xwd3VmY3dhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTczMDI5MCwiZXhwIjoyMDk3MzA2MjkwfQ.sEfSCpcax6MK4nBWdSotOCNFuoAdafQqlTPvwP-xoL8",
-    "CLIENT_URL": "https://tracingsnowflake.vercel.app",
-    "TRACE_JWT_SECRET": "trace-jwt-2026-change-me",
-    "TRACE_HMAC_SECRET": "trace-hmac-2026-change-me"
+    "CLIENT_URL": "https://tracingsnowflake.vercel.app"
   }
 }
