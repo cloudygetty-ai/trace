@@ -19,7 +19,7 @@ export default function DogProfile() {
         <div className={"px-4 py-6 flex flex-col items-center gap-3 bg-gradient-to-b to-transparent " + (dog.status==='lost' ? 'from-warn/5' : 'from-cyan/5')}>
           <DogAvatar photoUrl={dog.photo_url} size={24}/>
           <h1 className="text-2xl font-bold">{dog.name}</h1>
-          <p className="text-sm text-muted2">{dog.breed} · {dog.age}</p>
+          <p className="text-sm text-muted">{dog.breed} · {dog.age}</p>
           {dog.chip_id && <p className="font-mono text-[10px] text-amber tracking-[.08em]">ACCT · {dog.chip_id.match(/.{1,3}/g)?.join(' ')}</p>}
           <StatusPill status={dog.status}/>
         </div>
