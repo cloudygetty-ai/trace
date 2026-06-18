@@ -45,7 +45,7 @@ export default function AddDog() {
           <div className="grid grid-cols-2 gap-3">
             {(['passive','active'] as const).map(type => (
               <div key={type} onClick={() => setF(p => ({...p, chip_type:type}))}
-                className={"border rounded-xl p-3 cursor-pointer transition-all " + (f.chip_type===type ? 'border-cyan bg-cyan/5' : 'border-border bg-s2')}>
+                className={"border rounded-xl p-3 cursor-pointer transition-all " + (f.chip_type===type ? 'border-amber bg-amber/5' : 'border-amber/10 glass-card')}>
                 <p className="text-sm font-semibold capitalize">{type}</p>
                 <p className="text-[10px] text-muted2 mt-1">{type==='passive' ? 'NFC + RFID · No battery' : 'NFC + RFID + BLE · 3yr battery'}</p>
                 <p className="font-mono text-[10px] text-amber mt-1">{type==='passive' ? '$24.99' : '$59.99'}</p>
