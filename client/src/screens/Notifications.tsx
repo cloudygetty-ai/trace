@@ -14,13 +14,13 @@ export default function Notifications() {
       <TopHeader title="Notifications" back action="Mark all read" onAction={() => {}}/>
       <div className="flex-1 overflow-y-auto">
         {NOTIFS.map((n, i) => (
-          <div key={i} className="flex gap-3 px-4 py-4 border-b border-amber/10 cursor-pointer hover:glass-card transition-colors">
+          <div key={i} className="flex gap-3 px-4 py-4 border-b border-amber/15 cursor-pointer hover:bg-surface border border-amber/15 rounded-2xl transition-colors">
             <span className="text-xl mt-0.5">{n.icon}</span>
             <div className="flex-1">
               <p className="text-sm font-semibold">{n.title}</p>
-              <p className="text-xs text-muted2 mt-1 leading-relaxed">{n.sub}</p>
+              <p className="text-xs text-muted mt-1 leading-relaxed">{n.sub}</p>
             </div>
-            <span className="font-mono text-[10px] text-muted2 flex-shrink-0">{n.time}</span>
+            <span className="font-mono text-[10px] text-muted flex-shrink-0">{n.time}</span>
           </div>
         ))}
       </div>
