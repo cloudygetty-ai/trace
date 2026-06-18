@@ -24,7 +24,7 @@ export default function FoundDog() {
     <div className="flex flex-col h-full bg-bg">
       <TopHeader title="Found a Dog?" back/>
       <div className="flex-1 overflow-y-auto px-5 py-6 flex flex-col gap-4">
-        <div className="bg-s2 border-2 border-dashed border-[#2c3540] rounded-2xl py-10 flex flex-col items-center gap-3 cursor-pointer"
+        <div className="glass-card border-2 border-dashed border-[#2c3540] rounded-2xl py-10 flex flex-col items-center gap-3 cursor-pointer"
           onClick={() => showToast('Hold phone to left shoulder blade...')}>
           <span className="text-5xl">📶</span>
           <p className="font-mono text-xs tracking-[.1em] text-muted2">TAP NFC CHIP</p>
@@ -37,7 +37,7 @@ export default function FoundDog() {
         </div>
         <div className="flex gap-2">
           <input value={id} onChange={e=>setId(e.target.value)} placeholder="985000012384721"
-            className="flex-1 bg-s2 border border-[#2c3540] rounded-xl px-3.5 py-3 text-sm font-mono text-cyan outline-none focus:border-cyan placeholder:text-muted tracking-[.06em]"/>
+            className="flex-1 glass-card border border-[#2c3540] rounded-xl px-3.5 py-3 text-sm font-mono text-amber outline-none focus:border-amber placeholder:text-muted tracking-[.06em]"/>
           <Btn sm onClick={lookup}>Find</Btn>
         </div>
         {result && (
@@ -53,7 +53,7 @@ export default function FoundDog() {
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div><p className="font-mono text-[8px] text-muted2 uppercase">Breed</p><p className="font-semibold mt-0.5">{result.breed}</p></div>
               <div><p className="font-mono text-[8px] text-muted2 uppercase">Owner</p><p className="font-semibold mt-0.5">{result.owner}</p></div>
-              <div><p className="font-mono text-[8px] text-muted2 uppercase">Contact</p><p className="font-semibold mt-0.5 text-cyan">{result.contact}</p></div>
+              <div><p className="font-mono text-[8px] text-muted2 uppercase">Contact</p><p className="font-semibold mt-0.5 text-amber">{result.contact}</p></div>
             </div>
             <div className="flex gap-2">
               <Btn full sm onClick={() => { api.reportScan({chip_id:result.chip_id,source:'nfc'}); showToast('✓ Owner notified'); }}>Report I Found Her</Btn>
@@ -61,9 +61,9 @@ export default function FoundDog() {
             </div>
           </div>
         )}
-        <div className="bg-s1 border border-border rounded-2xl overflow-hidden">
-          <p className="px-4 py-3 text-xs font-semibold text-muted2 border-b border-border">If dog has no chip</p>
-          <button className="w-full px-4 py-3.5 text-left text-sm border-b border-border flex items-center gap-3" onClick={() => showToast('Sighting reporter opened')}>
+        <div className="glass-card border border-amber/10 rounded-2xl overflow-hidden">
+          <p className="px-4 py-3 text-xs font-semibold text-muted2 border-b border-amber/10">If dog has no chip</p>
+          <button className="w-full px-4 py-3.5 text-left text-sm border-b border-amber/10 flex items-center gap-3" onClick={() => showToast('Sighting reporter opened')}>
             <span>📷</span> Report by description + photo
           </button>
           <button className="w-full px-4 py-3.5 text-left text-sm flex items-center gap-3" onClick={() => showToast('Bergen County Animal Shelter · 0.4 mi')}>
