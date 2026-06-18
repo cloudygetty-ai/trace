@@ -14,7 +14,7 @@ export default function Notifications() {
       <TopHeader title="Notifications" back action="Mark all read" onAction={() => {}}/>
       <div className="flex-1 overflow-y-auto">
         {NOTIFS.map((n, i) => (
-          <div key={i} className="flex gap-3 px-4 py-4 border-b border-border cursor-pointer hover:bg-s1 transition-colors">
+          <div key={i} className="flex gap-3 px-4 py-4 border-b border-amber/10 cursor-pointer hover:glass-card transition-colors">
             <span className="text-xl mt-0.5">{n.icon}</span>
             <div className="flex-1">
               <p className="text-sm font-semibold">{n.title}</p>
