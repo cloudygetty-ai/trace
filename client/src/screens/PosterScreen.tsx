@@ -31,7 +31,7 @@ export default function PosterScreen() {
             </div>
             <div className="bg-[#111] rounded-xl p-3 flex justify-between items-center">
               <div><p className="font-mono text-[8px] text-gray-500 uppercase">Reward</p><p className="text-xl font-bold text-[#4eff91] font-mono">$200</p></div>
-              <div className="text-right"><p className="font-mono text-[8px] text-gray-500">Scan to report</p><p className="text-[10px] text-cyan-400 font-mono mt-0.5">trace.app/r/{dog?.id?.slice(0,8) ?? 'luna-nj'}</p></div>
+              <div className="text-right"><p className="font-mono text-[8px] text-gray-500">Scan to report</p><p className="text-[10px] text-amber-400 font-mono mt-0.5">trace.app/r/{dog?.id?.slice(0,8) ?? 'luna-nj'}</p></div>
             </div>
             <div className="bg-gray-50 rounded-xl p-3 flex justify-between items-center">
               <div><p className="font-mono text-[8px] uppercase tracking-[.08em] text-gray-400">Call if you see {dog?.name ?? 'Luna'}</p><p className="text-lg font-bold text-gray-900 font-mono">(201) 555-0192</p></div>
