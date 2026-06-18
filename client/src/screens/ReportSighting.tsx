@@ -30,44 +30,44 @@ export default function ReportSighting() {
     <div className="flex flex-col h-full bg-bg">
       <TopHeader title="Report Sighting" back/>
       <div className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-4">
-        <div className="glass-card border border-amber/10 rounded-2xl p-4 flex gap-3 items-center">
+        <div className="bg-surface border border-amber/15 rounded-2xl border border-amber/15 rounded-2xl p-4 flex gap-3 items-center">
           <span className="text-3xl">🐕</span>
           <div>
             <p className="text-base font-bold">Luna</p>
-            <p className="text-xs text-muted2">Husky Mix · Grey & white · Blue eyes</p>
+            <p className="text-xs text-muted">Husky Mix · Grey & white · Blue eyes</p>
             <p className="font-mono text-[9px] text-warn mt-1.5">MISSING SINCE 8:30 AM TODAY</p>
           </div>
         </div>
-        <div className="glass-card border-[1.5px] border-dashed border-[#2c3540] rounded-2xl h-28 flex flex-col items-center justify-center gap-2 cursor-pointer active:border-amber"
+        <div className="bg-surface border border-amber/15 rounded-2xl border-[1.5px] border-dashed border-[#2c3540] rounded-2xl h-28 flex flex-col items-center justify-center gap-2 cursor-pointer active:border-amber"
           onClick={() => showToast('Camera opened')}>
           <span className="text-3xl">📷</span>
-          <p className="font-mono text-[9px] text-muted2 tracking-[.06em]">ADD PHOTO OF DOG</p>
+          <p className="font-mono text-[9px] text-muted tracking-[.06em]">ADD PHOTO OF DOG</p>
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="font-mono text-[9px] uppercase tracking-[.1em] text-muted2">Where did you see the dog?</label>
+          <label className="font-mono text-[9px] uppercase tracking-[.1em] text-muted">Where did you see the dog?</label>
           <input value={loc} onChange={e=>setLoc(e.target.value)} placeholder="Corner of Oak & 4th St"
-            className="glass-card border border-[#2c3540] rounded-xl text-sm text-cream px-3.5 py-3 outline-none focus:border-amber placeholder:text-muted"/>
+            className="bg-surface border border-amber/15 rounded-2xl border border-[#2c3540] rounded-xl text-sm text-text px-3.5 py-3 outline-none focus:border-amber placeholder:text-muted"/>
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="font-mono text-[9px] uppercase tracking-[.1em] text-muted2">What was the dog doing?</label>
+          <label className="font-mono text-[9px] uppercase tracking-[.1em] text-muted">What was the dog doing?</label>
           <textarea value={desc} onChange={e=>setDesc(e.target.value)} placeholder="Running east on Oak St, appeared calm..." rows={2}
-            className="glass-card border border-[#2c3540] rounded-xl text-sm text-cream px-3.5 py-3 outline-none focus:border-amber placeholder:text-muted resize-none"/>
+            className="bg-surface border border-amber/15 rounded-2xl border border-[#2c3540] rounded-xl text-sm text-text px-3.5 py-3 outline-none focus:border-amber placeholder:text-muted resize-none"/>
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="font-mono text-[9px] uppercase tracking-[.1em] text-muted2">When?</label>
+          <label className="font-mono text-[9px] uppercase tracking-[.1em] text-muted">When?</label>
           <input value={when} onChange={e=>setWhen(e.target.value)} placeholder="Just now / 10 minutes ago..."
-            className="glass-card border border-[#2c3540] rounded-xl text-sm text-cream px-3.5 py-3 outline-none focus:border-amber placeholder:text-muted"/>
+            className="bg-surface border border-amber/15 rounded-2xl border border-[#2c3540] rounded-xl text-sm text-text px-3.5 py-3 outline-none focus:border-amber placeholder:text-muted"/>
         </div>
-        <div className="glass-card border border-[#2c3540] rounded-xl p-4 flex items-center gap-3">
+        <div className="bg-surface border border-amber/15 rounded-2xl border border-[#2c3540] rounded-xl p-4 flex items-center gap-3">
           <span className="text-xl">📍</span>
           <div className="flex-1">
             <p className="text-sm font-medium">Use my current location</p>
-            <p className="text-[11px] text-muted2 mt-0.5">Adds precise location to the report</p>
+            <p className="text-[11px] text-muted mt-0.5">Adds precise location to the report</p>
           </div>
           <Toggle on={useGPS} onToggle={() => setUseGPS(v=>!v)}/>
         </div>
         <div className="bg-amber/5 border-l-2 border-amber rounded-r-xl p-3 text-[11px] text-amber/70 leading-relaxed">
-          🔒 <strong className="text-cream">Privacy:</strong> Your identity is never shared. Only location and time are sent to the owner.
+          🔒 <strong className="text-text">Privacy:</strong> Your identity is never shared. Only location and time are sent to the owner.
         </div>
         <Btn full onClick={submit} disabled={loading}>{loading ? 'Submitting...' : 'Submit Sighting →'}</Btn>
       </div>
