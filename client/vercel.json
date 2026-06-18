@@ -2,16 +2,35 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
+  "build": {
+    "env": {
+      "VITE_SUPABASE_URL": "https://uneqlkclvazolpwufcwa.supabase.co",
+      "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVuZXFsa2NsdmF6b2xwd3VmY3dhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3MzAyOTAsImV4cCI6MjA5NzMwNjI5MH0.XG27y18eqXzPApwCz-1rQiz-60Yo1piywbMFHx_F9cc",
+      "VITE_API_URL": "https://trace-api.fly.dev/api"
+    }
+  },
   "rewrites": [
-    { "source": "/((?!api).*)", "destination": "/index.html" }
+    {
+      "source": "/((?!api).*)",
+      "destination": "/index.html"
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
       ]
     }
   ]
