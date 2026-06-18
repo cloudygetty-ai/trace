@@ -42,7 +42,7 @@ export default function ChipsScreen() {
             </div>
           );
         })}
-        <button onClick={() => nav('/add-dog')} className="w-full h-11 bg-transparent border border-amber/10 rounded-xl font-mono text-[11px] text-muted2 tracking-[.06em]">
+        <button onClick={() => nav('/add-dog')} className="w-full h-11 bg-transparent border border-amber/15 rounded-xl font-mono text-[11px] text-muted tracking-[.06em]">
           + Register Another Chip
         </button>
       </div>
