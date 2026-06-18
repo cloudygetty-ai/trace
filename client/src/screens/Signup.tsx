@@ -35,11 +35,11 @@ export default function Signup() {
         <FormInput label="Password" type="password" placeholder="••••••••" value={f.pw} onChange={set('pw')}/>
         <FormInput label="Zip code" placeholder="07601" value={f.zip} onChange={set('zip')}/>
         <div className="bg-amber/5 border-l-2 border-amber rounded-r-xl p-3 text-[11px] text-amber/70 leading-relaxed">
-          <strong className="text-cream">Community relay:</strong> TRACE passively detects lost dogs via BLE. You can disable this in Settings.
+          <strong className="text-text">Community relay:</strong> TRACE passively detects lost dogs via BLE. You can disable this in Settings.
         </div>
         {err && <p className="text-warn text-xs font-mono">{err}</p>}
         <Btn full onClick={submit} disabled={loading}>{loading ? 'Creating account...' : 'Create Account →'}</Btn>
-        <p className="text-[11px] text-muted2 text-center leading-relaxed">
+        <p className="text-[11px] text-muted text-center leading-relaxed">
           By signing up you agree to the Terms of Service.<br/>TRACE never sells your data.
         </p>
       </div>
