@@ -38,4 +38,13 @@ export const api = {
     req<any[]>(`/community/nearby?lat=${lat}&lng=${lng}&radius=${r ?? 5000}`),
   // Poster
   getPosterData:  (dogId: string)    => req<any>(`/poster/${dogId}`),
+
+  // Shop
+  getShopCatalog: ()                 => req<any>('/shop/catalog'),
+  createCheckout: (chip_type: string, dog_id?: string) =>
+    req<any>('/shop/checkout', { method: 'POST', body: JSON.stringify({ chip_type, dog_id }) }),
+  getOrders:      ()                 => req<any[]>('/shop/orders'),
+  getCheckoutSession: (sessionId: string) => req<any>(`/shop/session/${sessionId}`),
+  registerOrderChip: (orderId: string, chip_id: string) =>
+    req<any>(`/shop/orders/${orderId}/register`, { method: 'PATCH', body: JSON.stringify({ chip_id }) }),
 };
