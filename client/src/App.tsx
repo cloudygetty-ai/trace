@@ -19,6 +19,9 @@ import Broadcast    from './screens/Broadcast';
 import PosterScreen from './screens/PosterScreen';
 import Notifications from './screens/Notifications';
 import Settings     from './screens/Settings';
+import Shop          from './screens/Shop';
+import ShopSuccess   from './screens/ShopSuccess';
+import Orders        from './screens/Orders';
 
 // Components
 import Toast from './components';
@@ -68,6 +71,9 @@ export default function App() {
           <Route path="/poster/:dogId?"    element={<AuthGuard><PosterScreen/></AuthGuard>}/>
           <Route path="/notifications"     element={<AuthGuard><Notifications/></AuthGuard>}/>
           <Route path="/settings"    element={<AuthGuard><Settings/></AuthGuard>}/>
+          <Route path="/shop"        element={<AuthGuard><Shop/></AuthGuard>}/>
+          <Route path="/shop/success" element={<AuthGuard><ShopSuccess/></AuthGuard>}/>
+          <Route path="/orders"      element={<AuthGuard><Orders/></AuthGuard>}/>
 
           <Route path="*" element={<Navigate to="/onboarding" replace/>}/>
         </Routes>
