@@ -11,6 +11,7 @@ const QUICK = [
   { icon:'📋', label:'Poster',      path:'/poster',    bg:'bg-amber/8' },
   { icon:'🔍', label:'Found One',   path:'/found',     bg:'bg-green/8' },
   { icon:'💾', label:'Chips',       path:'/chips',     bg:'bg-amber/8' },
+  { icon:'🛒', label:'Buy Chip',    path:'/shop',      bg:'bg-amber/12' },
   { icon:'⚙️', label:'Settings',    path:'/settings',  bg:'bg-wood2/50' },
 ];
 
