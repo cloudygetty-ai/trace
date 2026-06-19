@@ -12,6 +12,33 @@ const CLIENT_URL   = 'https://tracingsnowflake.vercel.app';
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 const app = express();
 
+// Stripe webhook — raw body required, must be registered before json parser
+app.post('/api/shop/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  if (!stripe || !STRIPE_WEBHOOK_SECRET) return res.status(503).json({ error: 'Webhook not configured' });
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(req.body, req.headers['stripe-signature'], STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    console.error('[TRACE] webhook signature failed', err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+    await supabase.from('chip_orders').update({
+      status: 'paid',
+      stripe_payment_intent: session.payment_intent,
+      shipping_name: session.shipping_details?.name || session.customer_details?.name || null,
+      shipping_address: session.shipping_details?.address || null,
+    }).eq('stripe_session_id', session.id);
+    console.log('[TRACE] order paid', session.id);
+  }
+
+  res.json({ received: true });
+});
+
+
+
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({ origin: CLIENT_URL, credentials: true, methods: ['GET','POST','PATCH','DELETE','OPTIONS'] }));
 app.use(express.json({ limit: '2mb' }));
@@ -165,6 +192,115 @@ app.get('/api/poster/:dogId', async (req, res) => {
   const { data: report } = await supabase.from('lost_reports').select('*').eq('dog_id', dog.id).eq('active', true).single();
   const { data: profile } = await supabase.from('profiles').select('phone,first_name').eq('id', req.user.id).single();
   res.json({ dog, report, contact: profile?.phone ?? '', sighting_url: `https://trace.app/r/${dog.id.slice(0,8)}` });
+});
+
+
+// ─── Shop / Chip Orders ────────────────────────────────────────────────────────
+const STRIPE_SECRET = process.env.STRIPE_SECRET_KEY || '';
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
+const PRICE_PASSIVE = process.env.STRIPE_PRICE_PASSIVE || '';
+const PRICE_ACTIVE  = process.env.STRIPE_PRICE_ACTIVE  || '';
+
+let stripe = null;
+if (STRIPE_SECRET) {
+  try { stripe = require('stripe')(STRIPE_SECRET); }
+  catch (e) { console.error('[TRACE] stripe init failed', e.message); }
+}
+
+const CHIP_CATALOG = {
+  passive: { name: 'ACCT Passive Chip', price_cents: 2499, price_id: PRICE_PASSIVE,
+             desc: 'NFC + RFID · No battery · Lifetime' },
+  active:  { name: 'ACCT Active Chip',  price_cents: 5999, price_id: PRICE_ACTIVE,
+             desc: 'NFC + RFID + BLE · 3yr battery · Live relay' },
+};
+
+// GET /api/shop/catalog — public catalog info
+app.get('/api/shop/catalog', (_req, res) => {
+  res.json({
+    passive: { name: CHIP_CATALOG.passive.name, price_cents: CHIP_CATALOG.passive.price_cents, desc: CHIP_CATALOG.passive.desc },
+    active:  { name: CHIP_CATALOG.active.name,  price_cents: CHIP_CATALOG.active.price_cents,  desc: CHIP_CATALOG.active.desc },
+    stripe_configured: !!stripe,
+  });
+});
+
+// POST /api/shop/checkout — create Stripe Checkout session
+app.post('/api/shop/checkout', async (req, res) => {
+  const { chip_type, dog_id } = req.body;
+  const item = CHIP_CATALOG[chip_type];
+  if (!item) return res.status(400).json({ error: 'Invalid chip_type — must be passive or active' });
+
+  if (!stripe) {
+    return res.status(503).json({ error: 'Payments not configured yet. Stripe keys pending.' });
+  }
+
+  try {
+    const lineItem = item.price_id
+      ? { price: item.price_id, quantity: 1 }
+      : { price_data: { currency: 'usd', product_data: { name: item.name, description: item.desc },
+                         unit_amount: item.price_cents }, quantity: 1 };
+
+    const session = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      line_items: [lineItem],
+      success_url: `${CLIENT_URL}/shop/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${CLIENT_URL}/shop`,
+      customer_email: req.user.email,
+      metadata: { user_id: req.user.id, dog_id: dog_id || '', chip_type },
+      shipping_address_collection: { allowed_countries: ['US', 'CA'] },
+    });
+
+    await supabase.from('chip_orders').insert({
+      user_id: req.user.id,
+      dog_id: dog_id || null,
+      chip_type,
+      price_cents: item.price_cents,
+      stripe_session_id: session.id,
+      status: 'pending',
+    });
+
+    res.json({ url: session.url, session_id: session.id });
+  } catch (e) {
+    console.error('[TRACE] checkout error', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// GET /api/shop/orders — user's order history
+app.get('/api/shop/orders', async (req, res) => {
+  const { data, error } = await supabase.from('chip_orders')
+    .select('*').eq('user_id', req.user.id).order('created_at', { ascending: false });
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data);
+});
+
+// GET /api/shop/orders/:sessionId — check order status (post-checkout polling)
+app.get('/api/shop/session/:sessionId', async (req, res) => {
+  const { data, error } = await supabase.from('chip_orders')
+    .select('*').eq('stripe_session_id', req.params.sessionId).eq('user_id', req.user.id).single();
+  if (error || !data) return res.status(404).json({ error: 'Order not found' });
+  res.json(data);
+});
+
+// PATCH /api/shop/orders/:id/register — assign chip_id when received
+app.patch('/api/shop/orders/:id/register', async (req, res) => {
+  const { chip_id } = req.body;
+  if (!/^\d{15}$/.test(chip_id || '')) return res.status(400).json({ error: 'chip_id must be 15 digits' });
+
+  const { data: order, error: oerr } = await supabase.from('chip_orders')
+    .select('*').eq('id', req.params.id).eq('user_id', req.user.id).single();
+  if (oerr || !order) return res.status(404).json({ error: 'Order not found' });
+  if (order.status !== 'paid' && order.status !== 'shipped' && order.status !== 'delivered')
+    return res.status(400).json({ error: 'Order not yet paid' });
+
+  const { error: upErr } = await supabase.from('chip_orders')
+    .update({ chip_id, status: 'registered' }).eq('id', order.id);
+  if (upErr) return res.status(500).json({ error: upErr.message });
+
+  if (order.dog_id) {
+    await supabase.from('dogs').update({ chip_id, chip_type: order.chip_type }).eq('id', order.dog_id);
+  }
+
+  res.json({ registered: true, chip_id });
 });
 
 // ─── Error handler ───────────────────────────────────────────────────────────
