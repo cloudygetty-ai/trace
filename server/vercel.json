@@ -16,6 +16,10 @@
     "NODE_ENV": "production",
     "SUPABASE_URL": "https://uneqlkclvazolpwufcwa.supabase.co",
     "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVuZXFsa2NsdmF6b2xwd3VmY3dhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTczMDI5MCwiZXhwIjoyMDk3MzA2MjkwfQ.sEfSCpcax6MK4nBWdSotOCNFuoAdafQqlTPvwP-xoL8",
-    "CLIENT_URL": "https://tracingsnowflake.vercel.app"
+    "CLIENT_URL": "https://tracingsnowflake.vercel.app",
+    "STRIPE_SECRET_KEY": "",
+    "STRIPE_WEBHOOK_SECRET": "",
+    "STRIPE_PRICE_PASSIVE": "",
+    "STRIPE_PRICE_ACTIVE": ""
   }
 }
