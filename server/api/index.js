@@ -46,6 +46,8 @@ app.use(express.json({ limit: '2mb' }));
 const lim = rateLimit({ windowMs: 60000, max: 120, standardHeaders: true, legacyHeaders: false });
 app.use(lim);
 
+const chipLookupLimiter = rateLimit({ windowMs: 60000, max: 20, standardHeaders: true, legacyHeaders: false, message: { error: 'Too many chip lookups — please wait a moment' } });
+
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 const OPEN = [
   ['/health', 'GET'],
@@ -143,7 +145,7 @@ app.get('/api/sightings/:dogId', async (req, res) => {
 });
 
 // ─── Chip ─────────────────────────────────────────────────────────────────────
-app.get('/api/chip/:chipId', async (req, res) => {
+app.get('/api/chip/:chipId', chipLookupLimiter, async (req, res) => {
   const chipId = req.params.chipId.replace(/\s/g, '');
   const { data: dog } = await supabase.from('dogs')
     .select('id,name,breed,color,age,status,photo_url,chip_id,chip_type,owner_id').eq('chip_id', chipId).single();
