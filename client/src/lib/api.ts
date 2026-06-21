@@ -47,4 +47,12 @@ export const api = {
   getCheckoutSession: (sessionId: string) => req<any>(`/shop/session/${sessionId}`),
   registerOrderChip: (orderId: string, chip_id: string) =>
     req<any>(`/shop/orders/${orderId}/register`, { method: 'PATCH', body: JSON.stringify({ chip_id }) }),
+
+  // Notifications
+  getNotifications:   ()              => req<any[]>('/notifications'),
+  markNotificationRead: (id: string)  => req<any>(`/notifications/${id}/read`, { method: 'PATCH' }),
+  markAllNotificationsRead: ()        => req<any>('/notifications/read-all', { method: 'POST' }),
+  // Upload
+  signUpload: (bucket: string, filename: string) =>
+    req<any>('/upload/sign', { method: 'POST', body: JSON.stringify({ bucket, filename }) }),
 };
