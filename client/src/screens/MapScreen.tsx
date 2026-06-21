@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store';
 import { TopHeader } from '../components';
 
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN as string;
+const MAPBOX_TOKEN_B64 = import.meta.env.VITE_MAPBOX_TOKEN_B64 as string;
+const MAPBOX_TOKEN = MAPBOX_TOKEN_B64 ? atob(MAPBOX_TOKEN_B64) : '';
 if (MAPBOX_TOKEN) mapboxgl.accessToken = MAPBOX_TOKEN;
 
 export default function MapScreen() {
