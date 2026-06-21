@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 import { useStore } from '../store';
 import { TopHeader, FormInput, Btn } from '../components';
+import PhotoUpload from '../components/PhotoUpload';
 
 export default function AddDog() {
   const [f, setF] = useState({ name:'', breed:'', age:'', color:'', chip_id:'', chip_type:'' as ''|'passive'|'active' });
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [hasChip, setHasChip] = useState<'yes'|'no'|null>(null);
   const [loading, setLoading] = useState(false);
   const { fetchDogs, showToast } = useStore();
@@ -16,7 +18,7 @@ export default function AddDog() {
     if (!f.name) { showToast('Dog name required'); return; }
     setLoading(true);
     try {
-      const payload = { ...f, chip_type: f.chip_type || null, chip_id: f.chip_id || null };
+      const payload = { ...f, chip_type: f.chip_type || null, chip_id: f.chip_id || null, photo_url: photoUrl };
       await api.createDog(payload);
       await fetchDogs();
       showToast('🐕 ' + f.name + ' added!');
@@ -30,11 +32,12 @@ export default function AddDog() {
     <div className="flex flex-col h-full bg-bg">
       <TopHeader title="Add Your Dog" back/>
       <div className="flex-1 overflow-y-auto px-5 py-6 flex flex-col gap-4">
-        <div className="text-center py-4">
-          <div className="text-5xl mb-3">🐕</div>
+        <div className="text-center py-2">
           <p className="font-display text-xl font-bold text-text">Add Your Dog</p>
           <p className="font-sans text-sm text-muted mt-1">You can add more dogs later</p>
         </div>
+
+        <PhotoUpload bucket="dog-photos" onUploaded={setPhotoUrl} label="ADD A PHOTO"/>
 
         <FormInput label="Dog's name" placeholder="Luna" value={f.name} onChange={set('name')}/>
         <div className="grid grid-cols-2 gap-3">
@@ -43,7 +46,6 @@ export default function AddDog() {
         </div>
         <FormInput label="Color / markings" placeholder="Grey & white, blue eyes" value={f.color} onChange={set('color')}/>
 
-        {/* ─── Chip question — resolves "where do chips come from" ─── */}
         <div className="bg-amber/8 border border-amber/20 rounded-2xl p-4 mt-2">
           <p className="font-display text-sm font-semibold text-text mb-1">Does {f.name || 'your dog'} already have a chip?</p>
           <p className="font-sans text-[11px] text-muted mb-3 leading-relaxed">
