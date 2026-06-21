@@ -6,7 +6,8 @@
     "env": {
       "VITE_SUPABASE_URL": "https://uneqlkclvazolpwufcwa.supabase.co",
       "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVuZXFsa2NsdmF6b2xwd3VmY3dhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3MzAyOTAsImV4cCI6MjA5NzMwNjI5MH0.XG27y18eqXzPApwCz-1rQiz-60Yo1piywbMFHx_F9cc",
-      "VITE_API_URL": "https://trace-server-eta.vercel.app/api"
+      "VITE_API_URL": "https://trace-server-eta.vercel.app/api",
+      "VITE_MAPBOX_TOKEN_B64": "cGsuZXlKMUlqb2laMlYwZEhrNE5pSXNJbUVpT2lKamJUZDZabUZuYldVd2FuRnNNbk54TTI4eGRqUnFaVzAxSW4wLjJXWHNuZktUdWdrOG44X1ZlbXRzSkE="
     }
   },
   "rewrites": [
