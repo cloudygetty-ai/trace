@@ -303,6 +303,47 @@ app.patch('/api/shop/orders/:id/register', async (req, res) => {
   res.json({ registered: true, chip_id });
 });
 
+
+// ─── Notifications ──────────────────────────────────────────────────────────
+app.get('/api/notifications', async (req, res) => {
+  const { data, error } = await supabase.from('notifications')
+    .select('*').eq('user_id', req.user.id).order('created_at', { ascending: false }).limit(50);
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data);
+});
+
+app.patch('/api/notifications/:id/read', async (req, res) => {
+  const { error } = await supabase.from('notifications')
+    .update({ read: true }).eq('id', req.params.id).eq('user_id', req.user.id);
+  if (error) return res.status(500).json({ error: error.message });
+  res.json({ read: true });
+});
+
+app.post('/api/notifications/read-all', async (req, res) => {
+  const { error } = await supabase.from('notifications')
+    .update({ read: true }).eq('user_id', req.user.id).eq('read', false);
+  if (error) return res.status(500).json({ error: error.message });
+  res.json({ ok: true });
+});
+
+// ─── Photo upload (signed URL pattern) ─────────────────────────────────────
+app.post('/api/upload/sign', async (req, res) => {
+  const { bucket, filename } = req.body;
+  const allowedBuckets = ['dog-photos', 'sighting-photos'];
+  if (!allowedBuckets.includes(bucket)) return res.status(400).json({ error: 'Invalid bucket' });
+
+  const ext = (filename || 'photo.jpg').split('.').pop();
+  const path = bucket === 'dog-photos'
+    ? `${req.user?.id || 'anon'}/${Date.now()}.${ext}`
+    : `sightings/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
+  const { data, error } = await supabase.storage.from(bucket).createSignedUploadUrl(path);
+  if (error) return res.status(500).json({ error: error.message });
+
+  const { data: pub } = supabase.storage.from(bucket).getPublicUrl(path);
+  res.json({ signedUrl: data.signedUrl, token: data.token, path, publicUrl: pub.publicUrl });
+});
+
 // ─── Error handler ───────────────────────────────────────────────────────────
 app.use((err, _req, res, _next) => {
   console.error('[TRACE]', err.message);
