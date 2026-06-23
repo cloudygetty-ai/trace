@@ -20,6 +20,9 @@
     "STRIPE_SECRET_KEY": "",
     "STRIPE_WEBHOOK_SECRET": "",
     "STRIPE_PRICE_PASSIVE": "",
-    "STRIPE_PRICE_ACTIVE": ""
+    "STRIPE_PRICE_ACTIVE": "",
+    "VAPID_PUBLIC_KEY": "BFJ7haWLVXeLd5vH_5fNNpTbBGOS0LhM6uvTeNcTE5aHGJKPfMHrFQox6HRHgWVXiDXSAOXs4eXoc-qgSsKdumc",
+    "VAPID_PRIVATE_KEY": "HGNLTN0xXM14y-vIfKxu00h3oqalp5gGs167_xPJwRs",
+    "VAPID_SUBJECT": "mailto:admin@trace.app"
   }
 }
