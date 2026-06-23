@@ -69,9 +69,25 @@ export default function Settings() {
         </div>
 
         <div className="px-4 mt-6">
-          <button onClick={async () => { await signOut(); nav('/login'); }}
+          <button
+              onClick={async () => {
+                if (!confirm('Delete account? This cannot be undone. All dogs and sightings will be removed.')) return;
+                try {
+                  const { data: { session } } = await import('../lib/supabase').then(m => m.supabase.auth.getSession());
+                  await fetch(import.meta.env.VITE_API_URL + '/account', {
+                    method: 'DELETE',
+                    headers: { Authorization: 'Bearer ' + session?.access_token },
+                    credentials: 'include',
+                  });
+                  await signOut(); nav('/login');
+                } catch { showToast('Account deletion failed — contact support'); }
+              }}
+              className="w-full h-11 bg-transparent border border-warn/30 rounded-xl font-mono text-[11px] text-warn tracking-[.06em] mb-2">
+              Delete Account
+            </button>
+            <button onClick={async () => { await signOut(); nav('/login'); }}
             className="w-full h-11 bg-transparent border border-amber/15 rounded-xl font-mono text-[11px] text-muted tracking-[.06em]">
-            Sign Out
+  Sign Out
           </button>
           <p className="font-mono text-[9px] text-muted text-center mt-4 tracking-[.06em]">TRACE v1.0.0 · ACCT · ISO 11784/11785</p>
         </div>
