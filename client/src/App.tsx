@@ -26,6 +26,7 @@ import Orders        from './screens/Orders';
 // Components
 import Toast from './components';
 import NavBar       from './components/NavBar';
+import { usePushNotifications } from './hooks/usePushNotifications';
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const user = useStore(s => s.user);
@@ -43,6 +44,7 @@ const NAV_ROUTES = ['/home', '/map', '/community', '/chips', '/settings'];
 
 export default function App() {
   const { init, toast } = useStore();
+  usePushNotifications();
   const location = useLocation();
   const showNav  = NAV_ROUTES.includes(location.pathname);
 
