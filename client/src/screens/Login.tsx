@@ -41,6 +41,7 @@ export default function Login() {
           <FormInput label="Email" type="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)}/>
           <FormInput label="Password" type="password" placeholder="••••••••" value={pw} onChange={e=>setPw(e.target.value)}/>
           {err && <p className="text-warn text-xs font-mono bg-warn/8 px-3 py-2 rounded-lg">{err}</p>}
+          <div className="text-right"><button onClick={() => nav('/forgot-password')} className="font-mono text-[10px] text-muted tracking-wide">Forgot password?</button></div>
           <Btn full onClick={submit} disabled={loading}>{loading ? 'Signing in...' : 'Sign In →'}</Btn>
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px" style={{background:'rgba(180,120,40,.15)'}}/>
