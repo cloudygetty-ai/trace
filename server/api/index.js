@@ -380,6 +380,29 @@ app.post('/api/upload/sign', async (req, res) => {
   res.json({ signedUrl: data.signedUrl, token: data.token, path, publicUrl: pub.publicUrl });
 });
 
+
+// DELETE /api/account — hard delete user + all data (cascades via FK)
+app.delete('/api/account', async (req, res) => {
+  try {
+    const userId = req.user.id;
+    // Delete storage objects
+    const { data: dogs } = await supabase.from('dogs').select('id,photo_url').eq('owner_id', userId);
+    for (const dog of (dogs || [])) {
+      if (dog.photo_url) {
+        const path = dog.photo_url.split('/dog-photos/')[1];
+        if (path) await supabase.storage.from('dog-photos').remove([path]);
+      }
+    }
+    // Delete auth user (cascades to profiles, dogs, lost_reports, sightings, chip_orders via FK)
+    const { error } = await supabase.auth.admin.deleteUser(userId);
+    if (error) throw error;
+    res.json({ deleted: true });
+  } catch (e) {
+    console.error('[TRACE] account delete error', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // ─── Error handler ───────────────────────────────────────────────────────────
 app.use((err, _req, res, _next) => {
   console.error('[TRACE]', err.message);
