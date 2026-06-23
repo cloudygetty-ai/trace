@@ -22,6 +22,8 @@ import Settings     from './screens/Settings';
 import Shop          from './screens/Shop';
 import ShopSuccess   from './screens/ShopSuccess';
 import Orders        from './screens/Orders';
+import ForgotPassword from './screens/ForgotPassword';
+import ResetPassword  from './screens/ResetPassword';
 
 // Components
 import Toast from './components';
@@ -59,6 +61,8 @@ export default function App() {
           <Route path="/login"       element={<Login/>}/>
           <Route path="/signup"      element={<Signup/>}/>
           <Route path="/found/:chipId?" element={<FoundDog/>}/>
+          <Route path="/forgot-password" element={<ForgotPassword/>}/>
+          <Route path="/reset-password"  element={<ResetPassword/>}/>
 
           {/* Auth-guarded */}
           <Route path="/add-dog"     element={<AuthGuard><AddDog/></AuthGuard>}/>
