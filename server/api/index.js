@@ -135,6 +135,16 @@ app.post('/api/sightings', async (req, res) => {
     .insert({ dog_id, source, geom: `POINT(${snap(lng,50)} ${snap(lat,50)})`,
               confidence, reporter_id: req.user?.id ?? null }).select().single();
   if (error) return res.status(500).json({ error: error.message });
+  // Push notify owner
+  const { data: dog } = await supabase.from('dogs').select('owner_id,name').eq('id', body.dog_id).single();
+  if (dog) {
+    pushToUser(dog.owner_id, {
+      title: `${dog.name} was spotted`,
+      body:  `A ${body.source === 'relay' ? 'BLE relay' : 'community'} sighting was reported`,
+      url:   `${'https://tracingsnowflake.vercel.app'}/map`,
+      tag:   `sighting-${body.dog_id}`,
+    });
+  }
   res.status(201).json(data);
 });
 app.get('/api/sightings/:dogId', async (req, res) => {
@@ -196,6 +206,30 @@ app.get('/api/poster/:dogId', async (req, res) => {
   res.json({ dog, report, contact: profile?.phone ?? '', sighting_url: `https://trace.app/r/${dog.id.slice(0,8)}` });
 });
 
+
+
+// ─── Web Push (VAPID) ────────────────────────────────────────────────────────
+let webpush = null;
+const VAPID_PUBLIC_KEY  = process.env.VAPID_PUBLIC_KEY  || 'BFJ7haWLVXeLd5vH_5fNNpTbBGOS0LhM6uvTeNcTE5aHGJKPfMHrFQox6HRHgWVXiDXSAOXs4eXoc-qgSsKdumc';
+const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY || 'HGNLTN0xXM14y-vIfKxu00h3oqalp5gGs167_xPJwRs';
+const VAPID_SUBJECT     = process.env.VAPID_SUBJECT     || 'mailto:admin@trace.app';
+try {
+  webpush = require('web-push');
+  webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
+} catch { console.error('[TRACE] web-push init failed'); }
+
+async function pushToUser(userId, payload) {
+  if (!webpush) return;
+  const { data } = await supabase.from('profiles').select('push_sub').eq('id', userId).single();
+  if (!data?.push_sub) return;
+  try {
+    await webpush.sendNotification(data.push_sub, JSON.stringify(payload));
+  } catch (e) {
+    if (e.statusCode === 410) {
+      await supabase.from('profiles').update({ push_sub: null }).eq('id', userId);
+    }
+  }
+}
 
 // ─── Shop / Chip Orders ────────────────────────────────────────────────────────
 const STRIPE_SECRET = process.env.STRIPE_SECRET_KEY || '';
