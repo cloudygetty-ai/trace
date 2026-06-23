@@ -48,6 +48,8 @@ export const api = {
   registerOrderChip: (orderId: string, chip_id: string) =>
     req<any>(`/shop/orders/${orderId}/register`, { method: 'PATCH', body: JSON.stringify({ chip_id }) }),
 
+  // Account
+  deleteAccount: () => req<any>('/account', { method: 'DELETE' }),
   // Notifications
   getNotifications:   ()              => req<any[]>('/notifications'),
   markNotificationRead: (id: string)  => req<any>(`/notifications/${id}/read`, { method: 'PATCH' }),
