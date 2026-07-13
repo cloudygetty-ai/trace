@@ -15,10 +15,13 @@
   "env": {
     "NODE_ENV": "production",
     "SUPABASE_URL": "https://uneqlkclvazolpwufcwa.supabase.co",
-    "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVuZXFsa2NsdmF6b2xwd3VmY3dhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTczMDI5MCwiZXhwIjoyMDk3MzA2MjkwfQ.sEfSCpcax6MK4nBWdSotOCNFuoAdafQqlTPvwP-xoL8",
+    "SUPABASE_SERVICE_ROLE_KEY": "USE_VERCEL_DASHBOARD",
     "CLIENT_URL": "https://tracingsnowflake.vercel.app",
     "VAPID_PUBLIC_KEY": "BFJ7haWLVXeLd5vH_5fNNpTbBGOS0LhM6uvTeNcTE5aHGJKPfMHrFQox6HRHgWVXiDXSAOXs4eXoc-qgSsKdumc",
-    "VAPID_PRIVATE_KEY": "HGNLTN0xXM14y-vIfKxu00h3oqalp5gGs167_xPJwRs",
-    "VAPID_SUBJECT": "mailto:admin@trace.app"
+    "VAPID_PRIVATE_KEY": "USE_VERCEL_DASHBOARD",
+    "VAPID_SUBJECT": "mailto:admin@trace.app",
+    "TWILIO_ACCOUNT_SID": "USE_VERCEL_DASHBOARD",
+    "TWILIO_AUTH_TOKEN": "USE_VERCEL_DASHBOARD",
+    "TWILIO_FROM_NUMBER": "USE_VERCEL_DASHBOARD"
   }
 }
