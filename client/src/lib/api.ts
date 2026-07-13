@@ -49,6 +49,8 @@ export const api = {
     req<any>(`/shop/orders/${orderId}/register`, { method: 'PATCH', body: JSON.stringify({ chip_id }) }),
 
   // Account
+  getSubscriberCount: () => req<{count:number}>('/sms/subscriber-count'),
+  publicOptIn: (d: any) => req<any>('/sms/public-optin', { method:'POST', body:JSON.stringify(d) }),
   deleteAccount: () => req<any>('/account', { method: 'DELETE' }),
   // Notifications
   getNotifications:   ()              => req<any[]>('/notifications'),
