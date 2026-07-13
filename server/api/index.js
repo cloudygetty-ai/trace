@@ -45,6 +45,10 @@ const chipLim = rateLimit({ windowMs:60000, max:20,  standardHeaders:true, legac
 const smsLim  = rateLimit({ windowMs:60000, max:3,   standardHeaders:true, legacyHeaders:false, message:{ error:'Too many broadcasts' } });
 app.use(lim);
 
+
+// ── Broadcast Engine (5-layer community alert) ────────────────────────────────
+const { fireFullBroadcast } = require('./broadcast-engine.js');
+
 // ── Auth ──────────────────────────────────────────────────────────────────────
 async function auth(req, res, next) {
   const open =
@@ -202,31 +206,59 @@ app.post('/api/chip/scan', async (req, res) => {
   res.json({ dog_id:dog.id, name:dog.name, status:dog.status, notified:true });
 });
 
-// ── Broadcast ─────────────────────────────────────────────────────────────────
+// ── Broadcast — 5-layer community alert ──────────────────────────────────────
 app.post('/api/alerts/broadcast', smsLim, async (req, res) => {
-  const { dog_id, message } = req.body;
+  const { dog_id } = req.body;
   const { data: dog } = await supabase.from('dogs').select('*').eq('id', dog_id).eq('owner_id', req.user.id).single();
-  if (!dog) return res.status(404).json({ error:'Dog not found' });
+  if (!dog) return res.status(404).json({ error: 'Dog not found' });
 
-  const msg = message ||
-    `TRACE ALERT — Lost dog near you. ${dog.name} | ${dog.breed||'Dog'} | ${dog.color||''}. If seen: ${CLIENT_URL}/r/${dog.id.slice(0,8)} Reply STOP to opt out`;
+  // Get or create active lost report ID for the sighting URL
+  const { data: report } = await supabase.from('lost_reports')
+    .select('id').eq('dog_id', dog_id).eq('active', true).single();
+  const reportId = report?.id ?? dog_id;
 
-  const { data: subs } = await supabase.from('profiles')
-    .select('phone').eq('sms_opted_in', true).not('phone','is',null);
+  // Fire all 5 layers concurrently
+  const results = await fireFullBroadcast(dog, reportId, supabase, twilio, webpush, TWILIO_FROM, CLIENT_URL);
 
-  let sent = 0, failed = 0;
-  for (const sub of (subs || [])) {
-    try {
-      await twilio?.messages.create({ to:sub.phone, from:TWILIO_FROM, body:msg });
-      sent++;
-    } catch { failed++; }
-    await new Promise(r => setTimeout(r, 250));
-  }
+  const totalSMS = results.sms_app_users + results.sms_community;
+  pushToUser(req.user.id, {
+    title: `Alert fired — ${dog.name}`,
+    body: `${totalSMS} SMS · ${results.camera_hits.length} camera hits · ${results.twitter ? 'Twitter ✓' : ''} ${results.nextdoor ? 'Nextdoor ✓' : ''} ${results.signage ? 'Billboard ✓' : ''}`.trim(),
+    url: `${CLIENT_URL}/map`,
+  });
 
-  const { data: op } = await supabase.from('profiles').select('phone').eq('id', req.user.id).single();
-  await sms(op?.phone, `TRACE: Alert sent for ${dog.name}. ${sent} people notified. ${CLIENT_URL}/map`);
-  pushToUser(req.user.id, { title:`Alert sent — ${dog.name}`, body:`${sent} SMS delivered`, url:`${CLIENT_URL}/map` });
-  res.json({ success:true, dog:dog.name, sent, failed });
+  res.json({ success: true, dog: dog.name, ...results, total_sms: totalSMS });
+});
+
+// ── Public SMS opt-in (no auth) ───────────────────────────────────────────────
+const publicOptinLimiter = rateLimit({ windowMs: 60000, max: 5, standardHeaders: true, legacyHeaders: false });
+
+app.post('/api/sms/public-optin', publicOptinLimiter, async (req, res) => {
+  const { name, phone, zip } = req.body;
+  if (!phone || !zip) return res.status(400).json({ error: 'phone and zip required' });
+
+  // Normalize phone
+  const normalized = phone.replace(/[^+\d]/g, '');
+  if (normalized.length < 10) return res.status(400).json({ error: 'Invalid phone number' });
+
+  const { error } = await supabase.from('community_subscribers')
+    .upsert({ name: name || null, phone: normalized, zip, active: true, source: 'web' }, { onConflict: 'phone' });
+  if (error) return res.status(500).json({ error: error.message });
+
+  await sms(normalized, `Welcome to TRACE Philly! You'll receive lost dog alerts near zip ${zip}. Reply STOP anytime to opt out.`);
+  res.json({ opted_in: true });
+});
+
+app.get('/api/sms/subscriber-count', async (_req, res) => {
+  const { count } = await supabase.from('community_subscribers').select('*', { count: 'exact', head: true }).eq('active', true);
+  res.json({ count: count ?? 0 });
+});
+
+app.post('/api/sms/public-optout', async (req, res) => {
+  const { phone } = req.body;
+  if (!phone) return res.status(400).json({ error: 'phone required' });
+  await supabase.from('community_subscribers').update({ active: false, opted_out_at: new Date().toISOString() }).eq('phone', phone.replace(/[^+\d]/g,''));
+  res.json({ opted_out: true });
 });
 
 // ── Community ─────────────────────────────────────────────────────────────────
