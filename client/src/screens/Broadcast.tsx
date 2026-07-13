@@ -1,104 +1,200 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../store';
+import { api } from '../lib/api';
 import { supabase } from '../lib/supabase';
-import { TopHeader, Btn, Toggle } from '../components';
+import { TopHeader, Btn } from '../components';
+
+interface BroadcastResults {
+  sms_app_users: number;
+  sms_community: number;
+  push: boolean;
+  camera_hits: any[];
+  twitter: string | null;
+  nextdoor: string | null;
+  signage: any | null;
+  total_sms: number;
+}
+
+const LAYERS = [
+  { key: 'sms',     icon: '💬', label: 'SMS Blast',        sub: 'App users + community subscribers' },
+  { key: 'push',    icon: '🔔', label: 'Web Push',         sub: 'All subscribed devices' },
+  { key: 'camera',  icon: '📷', label: 'Camera Network',   sub: 'Flock Safety · Philly CCTV grid' },
+  { key: 'social',  icon: '📣', label: 'Social Media',     sub: 'Twitter/X · Nextdoor auto-post' },
+  { key: 'signage', icon: '🪧', label: 'Digital Signage',  sub: 'Programmatic billboards · $5 buy' },
+];
 
 export default function Broadcast() {
   const { dogId } = useParams();
   const { dogs, activeDog, showToast } = useStore();
   const dog = dogs.find(d => d.id === dogId) ?? activeDog ?? dogs.find(d => d.status === 'lost') ?? dogs[0];
-  const [push, setPush] = useState(true);
   const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [results, setResults] = useState<BroadcastResults | null>(null);
+  const [subCount, setSubCount] = useState(0);
   const nav = useNavigate();
 
-  const send = async () => {
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/sms/subscriber-count`)
+      .then(r => r.json()).then(d => setSubCount(d.count ?? 0)).catch(() => {});
+  }, []);
+
+  const fire = async () => {
     if (!dog) { showToast('No dog selected'); return; }
     setSending(true);
     try {
-      // Broadcast via Supabase Realtime to all connected users in area
-      const channel = supabase.channel('trace-broadcasts');
-      await channel.subscribe();
-      await channel.send({
-        type: 'broadcast',
-        event: 'lost-dog-alert',
-        payload: {
-          dog_id:    dog.id,
-          dog_name:  dog.name,
-          breed:     dog.breed,
-          color:     dog.color,
-          photo_url: dog.photo_url,
-          status:    'lost',
-          ts:        new Date().toISOString(),
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/alerts/broadcast`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`,
         },
+        body: JSON.stringify({ dog_id: dog.id }),
       });
-      supabase.removeChannel(channel);
-
-      // Also insert a notification for all users who have the app open
-      // (push via service worker fires on next sighting trigger)
-      setSent(true);
-      showToast('✓ Alert broadcast to nearby TRACE users');
-      setTimeout(() => nav(-1), 2000);
+      const data = await res.json();
+      if (data.success) {
+        setResults(data);
+        showToast('✓ All 5 layers fired');
+      } else {
+        showToast(data.error ?? 'Broadcast failed');
+      }
     } catch (e: any) {
-      showToast(e.message ?? 'Broadcast failed');
+      showToast(e.message ?? 'Network error');
     } finally {
-      setSending(false); }
+      setSending(false);
+    }
   };
 
-  if (sent) return (
-    <div className="flex flex-col h-full bg-bg items-center justify-center gap-4 px-8 text-center">
-      <span className="text-5xl">📡</span>
-      <p className="font-display text-xl font-bold text-text">Alert sent</p>
-      <p className="font-sans text-sm text-muted">All nearby TRACE users have been notified about {dog?.name}.</p>
+  if (results) return (
+    <div className="flex flex-col h-full bg-bg">
+      <TopHeader title="Alert Sent" back/>
+      <div className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-4">
+        <div className="text-center py-4">
+          <div className="text-5xl mb-3">🚨</div>
+          <p className="font-display text-2xl font-bold text-text">Alert is live</p>
+          <p className="font-sans text-sm text-muted mt-2">Every channel fired for {dog?.name}</p>
+        </div>
+
+        {/* Results grid */}
+        <div className="flex flex-col gap-3">
+          <div className="bg-surface border border-amber/15 rounded-2xl p-4 flex items-center gap-3">
+            <span className="text-2xl">💬</span>
+            <div className="flex-1">
+              <p className="font-sans text-sm font-semibold text-text">SMS Blast</p>
+              <p className="font-sans text-xs text-muted">{results.total_sms} people notified</p>
+            </div>
+            <span className="font-mono text-lg font-bold text-amber">{results.total_sms}</span>
+          </div>
+
+          <div className={"bg-surface border rounded-2xl p-4 flex items-center gap-3 " + (results.push ? 'border-green/30' : 'border-amber/15')}>
+            <span className="text-2xl">🔔</span>
+            <div className="flex-1">
+              <p className="font-sans text-sm font-semibold text-text">Web Push</p>
+              <p className="font-sans text-xs text-muted">{results.push ? 'Delivered to all subscribed devices' : 'No subscribed devices'}</p>
+            </div>
+            <span className={"font-mono text-sm font-bold " + (results.push ? 'text-green' : 'text-muted')}>{results.push ? '✓' : '—'}</span>
+          </div>
+
+          <div className={"bg-surface border rounded-2xl p-4 flex items-center gap-3 " + (results.camera_hits.length > 0 ? 'border-amber/30' : 'border-amber/15')}>
+            <span className="text-2xl">📷</span>
+            <div className="flex-1">
+              <p className="font-sans text-sm font-semibold text-text">Camera Network</p>
+              <p className="font-sans text-xs text-muted">{results.camera_hits.length > 0 ? `${results.camera_hits.length} potential sightings found` : 'Flock Safety queried — no hits yet'}</p>
+            </div>
+            <span className={"font-mono text-sm font-bold " + (results.camera_hits.length > 0 ? 'text-amber' : 'text-muted')}>{results.camera_hits.length}</span>
+          </div>
+
+          <div className="bg-surface border border-amber/15 rounded-2xl p-4 flex items-center gap-3">
+            <span className="text-2xl">📣</span>
+            <div className="flex-1">
+              <p className="font-sans text-sm font-semibold text-text">Social Media</p>
+              <div className="flex gap-2 mt-1">
+                <span className={"font-mono text-[9px] px-2 py-0.5 rounded-full " + (results.twitter ? 'bg-amber/10 text-amber' : 'bg-wood2/50 text-muted')}>
+                  Twitter {results.twitter ? '✓' : '—'}
+                </span>
+                <span className={"font-mono text-[9px] px-2 py-0.5 rounded-full " + (results.nextdoor ? 'bg-green/10 text-green' : 'bg-wood2/50 text-muted')}>
+                  Nextdoor {results.nextdoor ? '✓' : '—'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className={"bg-surface border rounded-2xl p-4 flex items-center gap-3 " + (results.signage ? 'border-amber/30' : 'border-amber/15')}>
+            <span className="text-2xl">🪧</span>
+            <div className="flex-1">
+              <p className="font-sans text-sm font-semibold text-text">Digital Signage</p>
+              <p className="font-sans text-xs text-muted">{results.signage ? `${results.signage.provider} campaign live` : 'Billboard API not configured'}</p>
+            </div>
+            <span className={"font-mono text-sm font-bold " + (results.signage ? 'text-amber' : 'text-muted')}>{results.signage ? '✓' : '—'}</span>
+          </div>
+        </div>
+
+        {results.camera_hits.length > 0 && (
+          <div className="bg-amber/8 border border-amber/20 rounded-2xl p-4">
+            <p className="font-mono text-[9px] text-amber uppercase tracking-wider mb-2">Camera hits — check map</p>
+            <p className="font-sans text-xs text-text leading-relaxed">
+              {results.camera_hits.length} Flock Safety camera{results.camera_hits.length > 1 ? 's' : ''} detected a possible match. Sightings added to the map automatically.
+            </p>
+            <button onClick={() => nav('/map')} className="mt-3 font-mono text-[10px] text-amber tracking-wide">
+              View on map →
+            </button>
+          </div>
+        )}
+
+        <Btn full variant="ghost" onClick={() => nav('/map')}>View Live Map →</Btn>
+      </div>
     </div>
   );
 
   return (
     <div className="flex flex-col h-full bg-bg">
-      <TopHeader title="Send Alert" back/>
-      <div className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-4">
+      <TopHeader title="Fire Alert" back/>
+      <div className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-4">
         {dog && (
           <div className="bg-warn/8 border border-warn/25 rounded-2xl p-4 flex items-center gap-3">
             <span className="text-3xl">🐕</span>
-            <div>
+            <div className="flex-1">
               <p className="font-display text-base font-bold text-text">{dog.name}</p>
               <p className="font-sans text-xs text-muted">{dog.breed} · {dog.color}</p>
             </div>
-            <span className="ml-auto font-mono text-[9px] text-warn border border-warn/30 px-2 py-1 rounded-md">LOST</span>
+            <span className="font-mono text-[9px] text-warn border border-warn/30 px-2 py-1 rounded-md">MISSING</span>
           </div>
         )}
 
-        <div className="bg-surface border border-amber/15 rounded-2xl overflow-hidden">
-          <div className="flex items-center gap-3 px-4 py-4 border-b border-amber/10">
-            <span className="text-xl">📡</span>
-            <div className="flex-1">
-              <p className="font-sans text-sm font-medium text-text">Realtime broadcast</p>
-              <p className="font-sans text-xs text-muted mt-0.5">Pings all active TRACE users nearby</p>
-            </div>
-            <Toggle on={true} onToggle={() => {}}/>
-          </div>
-          <div className="flex items-center gap-3 px-4 py-4">
-            <span className="text-xl">🔔</span>
-            <div className="flex-1">
-              <p className="font-sans text-sm font-medium text-text">Push notification</p>
-              <p className="font-sans text-xs text-muted mt-0.5">Web push to subscribed users</p>
-            </div>
-            <Toggle on={push} onToggle={() => setPush(v => !v)}/>
-          </div>
+        {/* Community size */}
+        <div className="bg-amber/8 border border-amber/20 rounded-2xl p-4 text-center">
+          <p className="font-mono text-3xl font-bold text-amber">{subCount.toLocaleString()}</p>
+          <p className="font-sans text-xs text-muted mt-1">people in the TRACE Philly alert network</p>
+          <a href="/alerts.html" target="_blank" className="font-mono text-[10px] text-amber mt-2 block tracking-wide">
+            Grow the network → trace.app/alerts
+          </a>
         </div>
 
-        <div className="bg-amber/8 border border-amber/15 rounded-2xl p-4">
-          <p className="font-mono text-[9px] text-muted uppercase tracking-wider mb-1">What happens</p>
-          <p className="font-sans text-[12px] text-text leading-relaxed">
-            Every TRACE user with the app open nearby will see an alert with {dog?.name ?? 'your dog'}'s photo and description.
-            Users who enabled push notifications will be notified even if the app is closed.
-          </p>
+        {/* 5 layers */}
+        <p className="font-display text-base font-semibold text-text px-1">5 layers fire simultaneously</p>
+        <div className="flex flex-col gap-2">
+          {LAYERS.map(l => (
+            <div key={l.key} className="bg-surface border border-amber/15 rounded-2xl p-3.5 flex items-center gap-3">
+              <span className="text-xl">{l.icon}</span>
+              <div className="flex-1">
+                <p className="font-sans text-sm font-semibold text-text">{l.label}</p>
+                <p className="font-sans text-xs text-muted mt-0.5">{l.sub}</p>
+              </div>
+              <span className="w-2 h-2 rounded-full bg-green animate-pulse flex-shrink-0"/>
+            </div>
+          ))}
         </div>
 
-        <Btn full onClick={send} disabled={sending || !dog}>
-          {sending ? 'Broadcasting...' : '📡  Send Alert Now'}
+        <Btn full onClick={fire} disabled={sending || !dog}
+          className={sending ? '' : 'shadow-[0_4px_20px_rgba(220,38,38,.3)]'}
+          style={{background: sending ? undefined : '#dc2626'}}>
+          {sending ? 'Broadcasting...' : '🚨  Fire Alert — All 5 Layers'}
         </Btn>
+
+        <p className="font-sans text-[11px] text-muted text-center leading-relaxed">
+          This fires SMS, push, cameras, social posts, and billboards simultaneously.
+          Rate limited to 3 per hour.
+        </p>
       </div>
     </div>
   );
