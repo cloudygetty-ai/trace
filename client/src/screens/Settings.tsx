@@ -65,7 +65,6 @@ export default function Settings() {
           <div className="cursor-pointer" onClick={() => showToast('Emergency contacts')}><SettingRow icon="👥" title="Emergency Contacts" sub="Secondary contacts for alerts" right={<span className="text-muted text-xs">›</span>}/></div>
           <div className="cursor-pointer" onClick={() => showToast('Reward escrow')}><SettingRow icon="💳" title="Reward Escrow" sub="Stripe-held reward funds" right={<span className="text-muted text-xs">›</span>}/></div>
           <div className="cursor-pointer" onClick={() => showToast('Vet integration')}><SettingRow icon="🏥" title="Vet Integration" sub="Auto-notify on RFID scan" right={<span className="text-muted text-xs">›</span>}/></div>
-          <div className="cursor-pointer" onClick={() => nav('/pd-portal')}><SettingRow icon="🛡️" title="PD/OEM Partner" sub="Riverside Township PD · Active" right={<span className="text-muted text-xs">›</span>}/></div>
         </div>
 
         <div className="px-4 mt-6">
