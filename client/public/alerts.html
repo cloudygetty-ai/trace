@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TRACE Alerts — Philly Lost Dog Network</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Lato',sans-serif;background:#fdf6ee;color:#2d1a05;min-height:100vh}
+.hero{background:linear-gradient(135deg,#2d1a05,#5c3d1e);color:#fdf6ee;padding:60px 24px 80px;text-align:center}
+.hero h1{font-family:'Playfair Display',serif;font-size:2.4rem;line-height:1.2;margin-bottom:16px}
+.hero p{font-size:1.1rem;opacity:.8;max-width:540px;margin:0 auto;line-height:1.7}
+.badge{display:inline-block;background:#d97706;color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.12em;padding:4px 12px;border-radius:20px;margin-bottom:20px;text-transform:uppercase}
+.stats{display:flex;justify-content:center;gap:40px;margin-top:48px;flex-wrap:wrap}
+.stat p{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:700;color:#d97706}
+.stat span{font-size:.8rem;opacity:.7;letter-spacing:.06em;text-transform:uppercase}
+.card{max-width:520px;margin:-40px auto 0;background:#fffaf3;border:1px solid rgba(180,120,40,.2);border-radius:24px;padding:36px;box-shadow:0 8px 40px rgba(0,0,0,.12);position:relative;z-index:1}
+.card h2{font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:8px;text-align:center}
+.card p{font-size:.9rem;color:#8a6a3a;text-align:center;margin-bottom:28px}
+label{display:block;font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8a6a3a;margin-bottom:6px}
+input{width:100%;border:1px solid rgba(180,120,40,.25);border-radius:12px;padding:14px 16px;font-size:.95rem;background:#fdf6ee;color:#2d1a05;outline:none;margin-bottom:16px;font-family:'Lato',sans-serif}
+input:focus{border-color:#d97706}
+.btn{width:100%;background:#d97706;color:#fff;border:none;border-radius:12px;padding:16px;font-family:'Playfair Display',serif;font-size:1.1rem;cursor:pointer;letter-spacing:.04em}
+.btn:hover{background:#b45309}
+.fine{font-size:.75rem;color:#b89060;text-align:center;margin-top:12px;line-height:1.6}
+.how{padding:60px 24px;max-width:700px;margin:0 auto}
+.how h2{font-family:'Playfair Display',serif;font-size:1.8rem;margin-bottom:32px;text-align:center}
+.steps{display:flex;flex-direction:column;gap:20px}
+.step{display:flex;gap:16px;align-items:flex-start}
+.icon{width:48px;height:48px;background:#f5e8cc;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.step h3{font-size:1rem;font-weight:700;margin-bottom:4px}
+.step p{font-size:.9rem;color:#8a6a3a;line-height:1.6}
+.success{display:none;text-align:center;padding:24px}
+.success h2{font-family:'Playfair Display',serif;font-size:1.5rem;color:#16a34a}
+footer{background:#2d1a05;color:rgba(255,245,220,.5);text-align:center;padding:24px;font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="badge">🐾 Philly Lost Dog Network</div>
+  <h1>Get instant alerts when a dog goes missing near you</h1>
+  <p>TRACE is building Philadelphia's first community-powered lost dog alert network. Sign up to receive SMS alerts when a dog is reported missing in your area.</p>
+  <div class="stats">
+    <div class="stat"><p id="sub-count">0</p><span>Subscribers</span></div>
+    <div class="stat"><p>Philly</p><span>Coverage Area</span></div>
+    <div class="stat"><p>< 60s</p><span>Alert Speed</span></div>
+  </div>
+</div>
+
+<div style="padding:0 16px">
+  <div class="card">
+    <div class="success" id="success">
+      <div style="font-size:3rem;margin-bottom:12px">🐾</div>
+      <h2>You're in!</h2>
+      <p style="color:#8a6a3a;margin-top:8px">You'll receive a confirmation text shortly. You can opt out anytime by replying STOP.</p>
+    </div>
+    <div id="form-inner">
+      <h2>Get TRACE Alerts</h2>
+      <p>Free. Opt out anytime. No spam — only real lost dog alerts near you.</p>
+      <label>Your name</label>
+      <input type="text" id="name" placeholder="Getty"/>
+      <label>Phone number</label>
+      <input type="tel" id="phone" placeholder="+1 (215) 555-0100"/>
+      <label>Zip code (for local alerts)</label>
+      <input type="text" id="zip" placeholder="19103" maxlength="5"/>
+      <button class="btn" onclick="subscribe()">Get Free Alerts →</button>
+      <p class="fine">By signing up you agree to receive SMS alerts from TRACE. Reply STOP to opt out. Message & data rates may apply.</p>
+    </div>
+  </div>
+</div>
+
+<div class="how">
+  <h2>How it works</h2>
+  <div class="steps">
+    <div class="step"><div class="icon">🐕</div><div><h3>Dog goes missing</h3><p>Owner reports their dog lost in the TRACE app. System activates immediately.</p></div></div>
+    <div class="step"><div class="icon">📡</div><div><h3>We scan the area</h3><p>BLE relay mesh, community cameras, and neighbor reports all activate within seconds.</p></div></div>
+    <div class="step"><div class="icon">📱</div><div><h3>You get a text</h3><p>Everyone opted-in within the search radius gets an SMS with the dog's photo, description, and last known location.</p></div></div>
+    <div class="step"><div class="icon">🏠</div><div><h3>Dog comes home</h3><p>Community sightings flow back to the owner in real time. Most dogs are found within hours.</p></div></div>
+  </div>
+</div>
+
+<footer>© 2026 TRACE — Tracker · Relay · Alert · Community · Chip · Not affiliated with government WEA systems.</footer>
+
+<script>
+const API = 'https://trace-server-eta.vercel.app/api';
+
+async function loadCount() {
+  try {
+    const r = await fetch(API + '/sms/subscriber-count');
+    const d = await r.json();
+    document.getElementById('sub-count').textContent = (d.count || 0).toLocaleString();
+  } catch {}
+}
+loadCount();
+
+async function subscribe() {
+  const name  = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const zip   = document.getElementById('zip').value.trim();
+  if (!phone || !zip) { alert('Phone and zip code are required'); return; }
+
+  try {
+    const r = await fetch(API + '/sms/public-optin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, phone, zip }),
+    });
+    const d = await r.json();
+    if (d.opted_in) {
+      document.getElementById('form-inner').style.display = 'none';
+      document.getElementById('success').style.display = 'block';
+    } else {
+      alert(d.error || 'Something went wrong. Try again.');
+    }
+  } catch {
+    alert('Network error. Please try again.');
+  }
+}
+</script>
+</body>
+</html>
