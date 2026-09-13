@@ -16,6 +16,11 @@ export default {
         paw:     '#c05c28',
         warn:    '#dc2626',
         green:   '#16a34a',
+        // TRACE identity (see src/brand/geometry.mjs) — for dark surfaces:
+        // splash, broadcast, map overlays, chip scanner.
+        signal:  '#2FE9F2',
+        alert:   '#FF8A2B',
+        plate:   '#04090D',
       },
       fontFamily: {
         display: ['"Playfair Display"', 'Georgia', 'serif'],

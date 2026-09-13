@@ -76,3 +76,29 @@ body::before {
   0%, 100% { opacity: 1; }
   50%       { opacity: .35; }
 }
+
+/* ── TRACE mark motion ───────────────────────────────────────────────────────
+   Driven by <TraceLogo animated />. The relay ring breathes, the broadcast
+   arcs pulse offbeat against it, the ground ripple expands. */
+@keyframes trace-relay-breathe {
+  0%, 100% { opacity: .35; }
+  50%      { opacity: .7; }
+}
+@keyframes trace-broadcast-pulse {
+  0%, 100% { opacity: .35; }
+  45%      { opacity: 1; }
+}
+@keyframes trace-ripple-out {
+  0%   { opacity: .8; transform: scale(.86); }
+  70%  { opacity: .15; transform: scale(1.1); }
+  100% { opacity: 0;   transform: scale(1.18); }
+}
+
+.trace-relay     { animation: trace-relay-breathe 4.2s ease-in-out infinite; }
+.trace-broadcast { animation: trace-broadcast-pulse 2.1s ease-in-out infinite; }
+.trace-ripple    { animation: trace-ripple-out 2.6s ease-out infinite;
+                   transform-origin: 256px 459px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .trace-relay, .trace-broadcast, .trace-ripple { animation: none; }
+}

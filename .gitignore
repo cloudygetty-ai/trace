@@ -5,3 +5,4 @@ dist/
 *.pfx
 *.pem
 .DS_Store
+.brand-tmp/
