@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;600;700&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;600;700&family=DM+Mono:wght@400;500&family=Chakra+Petch:wght@500;600;700&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body, #root { height: 100%; background: #fdf6ee; overflow: hidden; }
@@ -102,3 +102,33 @@ body::before {
 @media (prefers-reduced-motion: reduce) {
   .trace-relay, .trace-broadcast, .trace-ripple { animation: none; }
 }
+
+/* ── Poster print sheet ──────────────────────────────────────────────────────
+   The Print rendition goes to paper via the browser's own PDF engine, so web
+   fonts resolve. Everything but the poster is stripped, and the sheet is
+   released from the app's fixed-height, overflow-hidden shell. */
+@media print {
+  html, body, #root {
+    height: auto !important;
+    overflow: visible !important;
+    background: #fff !important;
+  }
+  body::before { display: none !important; }
+
+  .print-poster {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 4 / 5;
+    --u: 190mm !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  @page { size: A4 portrait; margin: 10mm; }
+}
+
+/* The poster must not depend on the global reset — it is also rendered outside
+   the app shell (print sheet, future server-side share card). */
+.trace-poster p,
+.trace-poster ul,
+.trace-poster li { margin: 0; }

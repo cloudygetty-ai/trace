@@ -26,6 +26,7 @@ export default {
         display: ['"Playfair Display"', 'Georgia', 'serif'],
         sans:    ['"Lato"', 'sans-serif'],
         mono:    ['"DM Mono"', 'monospace'],
+        hud:     ['"Chakra Petch"', '"DM Mono"', 'monospace'],
       },
     },
   },
