@@ -36,11 +36,12 @@ router.post('/lost', async (req, res, next) => {
     const { data, error } = await supabase
       .from('lost_reports')
       .insert({
-        dog_id:       body.dog_id,
-        last_seen:    point,
-        radius_m:     body.radius_m,
-        reward_cents: body.reward_cents,
-        active:       true,
+        dog_id:           body.dog_id,
+        last_seen:        point,
+        last_seen_label:  body.last_seen_loc,
+        radius_m:         body.radius_m,
+        reward_cents:     body.reward_cents,
+        active:           true,
       })
       .select()
       .single();

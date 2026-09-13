@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -15 700 190" width="700" height="190" role="img" aria-label="TRACE">
+  <defs>
+    <radialGradient id="plate" cx="50%" cy="42%" r="72%">
+      <stop offset="0%" stop-color="#fffaf3"/>
+      <stop offset="100%" stop-color="#f5e8cc"/>
+    </radialGradient>
+    <pattern id="hex" width="42" height="24.2" patternUnits="userSpaceOnUse">
+      <path d="M0 12.1 L7 0 L21 0 L28 12.1 L21 24.2 L7 24.2 Z" fill="none"
+            stroke="#8a6a3a" stroke-width="1" opacity=".5"/>
+    </pattern>
+    
+  </defs>
+  <g >
+    
+  <path d="M20 15 H130 M75 15 V145" fill="none" stroke="#0E7C86" stroke-width="13" opacity="1"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M20 15 H130 M75 15 V145" fill="none" stroke="#0E7C86" stroke-width="4.42"
+        opacity="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M155 145 V15 H213 A38 38 0 0 1 213 91 H155 M196 91 L250 145" fill="none" stroke="#C05C28" stroke-width="13" opacity="1"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M155 145 V15 H213 A38 38 0 0 1 213 91 H155 M196 91 L250 145" fill="none" stroke="#C05C28" stroke-width="4.42"
+        opacity="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M275 145 L328 15 L381 145 M297 100 H359" fill="none" stroke="#0E7C86" stroke-width="13" opacity="1"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M275 145 L328 15 L381 145 M297 100 H359" fill="none" stroke="#0E7C86" stroke-width="4.42"
+        opacity="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M508 29 A65 65 0 1 0 508 131" fill="none" stroke="#C05C28" stroke-width="13" opacity="1"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M508 29 A65 65 0 1 0 508 131" fill="none" stroke="#C05C28" stroke-width="4.42"
+        opacity="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M650 15 H560 V145 H650 M560 80 H630" fill="none" stroke="#0E7C86" stroke-width="13" opacity="1"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M650 15 H560 V145 H650 M560 80 H630" fill="none" stroke="#0E7C86" stroke-width="4.42"
+        opacity="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
