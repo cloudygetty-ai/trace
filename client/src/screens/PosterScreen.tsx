@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useStore } from '../store';
 import { TopHeader, Btn } from '../components';
+import SnapShareButton, { lostDogShareUrl } from '../components/SnapShareButton';
 
 export default function PosterScreen() {
   const { dogId } = useParams();
@@ -18,7 +19,9 @@ export default function PosterScreen() {
           </div>
           <div className="p-5 flex flex-col gap-3">
             <div className="flex gap-3">
-              <div className="w-24 h-24 rounded-xl bg-gray-100 flex items-center justify-center text-4xl flex-shrink-0">🐕</div>
+              {dog?.photo_url
+                ? <img src={dog.photo_url} alt="" className="w-24 h-24 rounded-xl object-cover flex-shrink-0"/>
+                : <div className="w-24 h-24 rounded-xl bg-gray-100 flex items-center justify-center text-4xl flex-shrink-0">🐕</div>}
               <div>
                 <div className="mb-2"><p className="font-mono text-[8px] uppercase tracking-[.1em] text-gray-400">Breed & Age</p><p className="text-sm font-semibold text-gray-900">{dog?.breed ?? 'Husky Mix'}, {dog?.age ?? '3 years'}</p></div>
                 <div><p className="font-mono text-[8px] uppercase tracking-[.1em] text-gray-400">Color / Markings</p><p className="text-sm font-semibold text-gray-900">{dog?.color ?? 'Grey & white, blue eyes'}</p></div>
@@ -39,8 +42,9 @@ export default function PosterScreen() {
             </div>
           </div>
         </div>
+        {dog && <SnapShareButton shareUrl={lostDogShareUrl(dog.id)}/>}
         <div className="flex gap-3">
-          <Btn full variant="ghost" onClick={() => { navigator.clipboard?.writeText('https://trace.app/r/luna-nj-8734'); showToast('🔗 Link copied'); }}>🔗 Share Link</Btn>
+          <Btn full variant="ghost" disabled={!dog} onClick={() => { if (!dog) return; navigator.clipboard?.writeText(lostDogShareUrl(dog.id)); showToast('🔗 Link copied'); }}>🔗 Share Link</Btn>
           <Btn full onClick={() => showToast('Downloading PDF...')}>↓ Download</Btn>
         </div>
       </div>

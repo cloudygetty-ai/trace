@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../store';
 import { TopHeader, StatusPill, Field, Btn, DogAvatar } from '../components';
+import SnapShareButton, { lostDogShareUrl } from '../components/SnapShareButton';
 
 export default function DogProfile() {
   const { id } = useParams();
@@ -35,6 +36,12 @@ export default function DogProfile() {
             : <Btn sm variant="warn" onClick={() => { reportLost(dog.id, 'Unknown'); }}>🚨 Report Lost</Btn>
           }
         </div>
+        {dog.status === 'lost' && (
+          <div className="px-4 pb-6">
+            <SnapShareButton shareUrl={lostDogShareUrl(dog.id)}/>
+            <p className="font-mono text-[10px] text-muted text-center mt-2">Posts {dog.name}'s missing flyer to your Snapchat Story — friends can report a sighting in one tap.</p>
+          </div>
+        )}
       </div>
     </div>
   );
