@@ -49,6 +49,9 @@ app.use(lim);
 // ── Broadcast Engine (5-layer community alert) ────────────────────────────────
 const { fireFullBroadcast } = require('./broadcast-engine.js');
 
+// ── Public share pages (Snapchat Creative Kit) — mounted before auth ──────────
+app.use(require('./snap-share.js')({ supabase, clientUrl: CLIENT_URL }));
+
 // ── Auth ──────────────────────────────────────────────────────────────────────
 async function auth(req, res, next) {
   const open =
